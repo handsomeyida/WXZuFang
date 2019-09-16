@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jc.wx.dao.TCommentMapper">
+
+    <select id="listcollectionbase" resultType="com.alibaba.fastjson.JSONObject">
+        select
+            co.ID,
+            wx.WX_NICK_NAME,
+            ba.CONTENT,
+            co.POST_ID,
+            co.IS_DEL,
+            DATE_FORMAT(co.CREATE_TIME, '%Y.%m.%d %T') CREATE_TIME,
+            DATE_FORMAT(co.SORT_TIME, '%Y.%m.%d %T') SORT_TIME,
+            pic.IMG_URL,
+            ba.MIN_PRICE,
+            ba.MAX_PRICE
+        from
+        t_user_collection co
+        left join t_post_base ba on co.POST_ID = ba.ID
+        left join t_post_picture pic on pic.POST_ID = co.POST_ID
+        left join t_wx_user wx on ba.USER_ID = wx.USER_ID
+        where
+        co.USER_ID = #{userId}
+        and co.IS_DEL = 0
+        ORDER BY co.SORT_TIME desc
+    </select>
+
+    <update id="deletecollectionbase">
+        update t_user_collection
+        set
+        IS_DEL = 1
+        where
+        ID = #{ID}
+    </update>
+
+</mapper>
